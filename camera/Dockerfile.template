@@ -1,0 +1,19 @@
+# Raspberry Pi 4だとしても、インストールする依存の関係でpi3を指定する必要があるので
+# テンプレ記法を使わずに直接指定する
+FROM balenalib/raspberrypi3-node:12-buster-run
+
+# aptの代わりに 'install_packages' を用いることで
+# apt updateやinstall後の不要なファイルの削除などの
+# 記述を省略できる
+# ※ balenalibのコンテナイメージ限定
+RUN install_packages libraspberrypi-bin
+
+WORKDIR /usr/src/app
+
+# 依存のインストールを先にすることで
+# アプリケーションの修正時に都度ビルドが実行されないようにする
+# （index.jsの変更だけではnpm installが実行されないようにCOPYを分けている）
+COPY package.json package.json
+RUN npm install --production
+COPY . .
+CMD ["npm",  "start"]

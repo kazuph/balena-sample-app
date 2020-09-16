@@ -1,0 +1,15 @@
+{
+  "name": "balena-camera",
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "moment": "^2.24.0",
+    "moment-timezone": "^0.5.27",
+    "raspicam": "~0.2.14",
+    "serve": "^11.1.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node index.js"
+  }
+}

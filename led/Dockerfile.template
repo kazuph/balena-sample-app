@@ -1,0 +1,4 @@
+FROM balenalib/%%BALENA_MACHINE_NAME%%-debian
+# CMD cd /sys/class/leds/led0 && sh -c "echo heartbeat > trigger"
+CMD cd /sys/class/leds/led0 && sh -c "echo none > trigger" && sh -c "echo 255 > brightness"
+# CMD cd /sys/class/leds/led0 && sh -c "echo 0 > brightness"

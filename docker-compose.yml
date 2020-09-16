@@ -1,0 +1,84 @@
+version: '2.1'
+
+# 今回初登場だが 'resin-data' というのは予約語で
+# これによりRAMではなくSDカード上のディレクトリをマウントでき
+# データを永続化できる
+volumes:
+  resin-data:
+  grafana_etc:
+  grafana_usr:
+  grafana_var:
+
+networks:
+  frontend:
+  backend:
+
+services:
+  # googlehome:
+  #   build: ./googlehome
+  #   command: sh -c "service dbus start && service avahi-daemon start && node index.js"
+  #   network_mode: host
+
+  camera:
+    build: ./camera
+    ports:
+      - "80:3000"
+    privileged: true
+    volumes:
+      - "resin-data:/data"
+
+  # ble-counter:
+  #   build: ./ble-counter
+  #   network_mode: host
+
+  # switchbot:
+  #   build: ./switchbot
+  #   network_mode: host
+
+  # camera-stream:
+  #   build: ./camera-stream
+  #   ports:
+  #     - "8080:8080"
+  #   privileged: true
+
+  # servo:
+  #   build: ./servo
+  #   privileged: true
+
+  # servo_web:
+  #   build: ./servo_web
+  #   ports:
+  #     - "80:4000"
+  #   privileged: true
+
+  prometheus:
+    build: ./prometheus
+    ports:
+      - "9090:9090"
+      - "9100:9100"
+    networks:
+      - frontend
+      - backend
+    depends_on:
+      - node_exporter
+    container_name: prometheus
+
+  grafana:
+    build: ./grafana
+    ports:
+      - "3000:3000"
+    networks:
+      - frontend
+      - backend
+    volumes:
+      - grafana_etc:/etc/grafana
+      - grafana_usr:/usr/share/grafana
+      - grafana_var:/var/lib/grafana
+    container_name: grafana
+
+  node_exporter:
+    build: ./node_exporter
+    networks:
+      - backend
+    container_name: node_exporter
+

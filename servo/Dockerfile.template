@@ -1,0 +1,11 @@
+FROM balenalib/raspberrypi3-node:12-buster-build as build
+RUN install_packages pigpio
+COPY package.json package.json
+RUN JOBS=MAX npm install --production --unsafe-perm && npm cache verify && rm -rf /tmp/*
+
+FROM balenalib/raspberrypi3-node:12-buster-run
+RUN install_packages pigpio
+WORKDIR /work
+COPY --from=build ./node_modules ./node_modules
+COPY *.js ./
+CMD ["node", "index.js"]
